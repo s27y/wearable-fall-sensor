@@ -125,18 +125,27 @@ void calc_xy_angles(){
    result=sqrt(y2+z2);
    result=x_val/result;
    float accel_angle_x = atan(result);
-
+  float degx = accel_angle_x * RAD_TO_DEG; 
+  
    //Y Axis
    result=sqrt(x2+z2);
    result=y_val/result;
    float accel_angle_y = atan(result);
-   
-   float degx = accel_angle_x * RAD_TO_DEG; 
    float degy = accel_angle_y * RAD_TO_DEG; 
+   
+   //Z Axis
+   result=sqrt(x2+y2);
+   result=z_val/result;
+   float accel_angle_z = atan(result);
+   float degz = accel_angle_z * RAD_TO_DEG; 
+   
+   
    Serial.println("Tilt of  X Y: ");
    Serial.print(degx);
   Serial.print(" , ");
   Serial.print(degy);
+  Serial.print(" , ");
+  Serial.print(degz);
   Serial.print(" , ");
   Serial.print(accel_angle_x);
   Serial.print(" , ");
