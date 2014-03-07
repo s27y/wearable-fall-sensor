@@ -26,6 +26,14 @@ float Ax,Ay,Az;//Unit g(9.8m/s^2)
 float Gx,Gy,Gz;//Unit ��/s
 float loudness;
 
+float accel_angle_x,  
+      accel_angle_y,  
+      accel_angle_z; // in radian
+      
+float accel_angle_degx,  
+      accel_angle_degy,  
+      accel_angle_degz; // in degree
+
 void initialiseAccelerationAndGyro() {
    // Initializing IMU sensor
    accelgyro.initialize();
@@ -129,44 +137,20 @@ void calc_xy_angles(){
    //Y Axis
    result=sqrt(x2+z2);
    result=y_val/result;
-   float accel_angle_y = atan(result);
-   float accel_angle_degy = accel_angle_y * RAD_TO_DEG; 
+   accel_angle_y = atan(result);
+   accel_angle_degy = accel_angle_y * RAD_TO_DEG; 
    
    //Z Axis
    result=sqrt(x2+y2);
    result=z_val/result;
-   float accel_angle_z = atan(result);
-   float accel_angle_degz = accel_angle_z * RAD_TO_DEG; 
+   accel_angle_z = atan(result);
+   accel_angle_degz = accel_angle_z * RAD_TO_DEG; 
    
    float accel_virtual_x = cos(accel_angle_x) * Ax;
    float accel_virtual_y = cos(accel_angle_y) * Ay;
    float accel_virtual_z = sin(accel_angle_z) * Az
                           +sin(accel_angle_x) * Ax
                           +sin(accel_angle_y) * Ay;
-
-  Serial.println("Tilt degree of  X Y Z: ");
-  Serial.print(accel_angle_degx);
-  Serial.print(" , ");
-  Serial.print(accel_angle_degy);
-  Serial.print(" , ");
-  Serial.print(accel_angle_degz);
-  Serial.println("Tilt of  X Y: ");
-  Serial.print(accel_angle_x);
-  Serial.print(" , ");
-  Serial.print(accel_angle_y);
-  Serial.print(" , ");
-  Serial.print(accel_angle_z);
-  Serial.println();
-  Serial.println("*********************");
-  Serial.println("Virtual accelerometer of  X Y Z: ");
-  Serial.print(accel_virtual_x);
-  Serial.print(" , ");
-  Serial.print(accel_virtual_y);
-  Serial.print(" , ");
-  Serial.print(accel_virtual_z);
-  Serial.println();
-  Serial.println("*********************");
-  
 }
 
 
@@ -187,7 +171,7 @@ void loop() {
    updateAccelerationAndGyro();
    calc_xy_angles();
    //updateLoudness();
-   bleTransmitSensorData();
+   //bleTransmitSensorData();
    delay(1000);
 }
 
