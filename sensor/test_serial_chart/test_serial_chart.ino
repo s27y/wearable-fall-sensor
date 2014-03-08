@@ -208,7 +208,13 @@ void newLoop()
 {
   getEstimatedInclination();
   //!!! Please note that printing more data will increase interval between samples. Try to keep it under 10ms (10,0000 us)   
-Serial.print(",");    
+  printSerialTestData();
+
+}
+void printSerialTestData()
+{
+  Serial.print(interval);
+  Serial.print(",");
   Serial.print(RwAcc[0]);  //Inclination X axis (as measured by accelerometer)
   Serial.print(",");
   Serial.print(RwEst[0]);  //Inclination X axis (estimated / filtered)
@@ -220,6 +226,17 @@ Serial.print(",");
   Serial.print(RwAcc[2]);  //Inclination Z axis (as measured by accelerometer)
   Serial.print(",");
   Serial.print(RwEst[2]);  //Inclination Z axis (estimated / filtered)  
+  Serial.println("");
+}
+void printDegree()
+{
+  Serial.print(interval);
+  Serial.print(",");
+  Serial.print(RwGyro[0]);  //Inclination X axis (as measured by accelerometer)
+  Serial.print(",");
+  Serial.print(RwGyro[1]);  //Inclination X axis (estimated / filtered)
+  Serial.print(",");    
+  Serial.print(RwGyro[2]);  //Inclination Y axis (as measured by accelerometer)
   Serial.println("");
 }
 
