@@ -43,16 +43,19 @@ public class View extends JPanel implements ActionListener
 			}
 			else if(source == this.btn2)
 			{
-				this.imageCanvas.setRotationInDegreee(this.imageCanvas.getRotationInDegreee()+10);
 			}
 			
 			
 			this.imageCanvas.repaint();
 		}
 		
-		public void updateImage(float deg)
+		public void updateImage(String str)
 		{
-			this.imageCanvas.setRotationInDegreee(deg);
+			String [] dataArray  = str.split(",");
+			this.imageCanvas.getImage()[0].setRotationInDegreee(Float.parseFloat(dataArray[1])*90f);
+			this.imageCanvas.getImage()[1].setRotationInDegreee(Float.parseFloat(dataArray[2])*90f);
+			this.imageCanvas.getImage()[2].setRotationInDegreee(Float.parseFloat(dataArray[3])*90f);
+
 			this.imageCanvas.repaint();
 		}
     }

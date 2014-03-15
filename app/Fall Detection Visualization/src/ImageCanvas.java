@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -14,25 +15,19 @@ public class ImageCanvas extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	int width = 300;
-	int height = 300;
+	int height = 300;	
+	private MyBufferedImage[] mBufferedImage = new MyBufferedImage[3];
 	
 	
-	private float rotationInDegreee=0;
-	
-	public float getRotationInDegreee() {
-		return rotationInDegreee;
-	}
-
-	public void setRotationInDegreee(float rotationInDegreee) {
-		this.rotationInDegreee = rotationInDegreee;
-	}
-
-	private BufferedImage mBufferedImage;
 	public ImageCanvas() {
 		super();
 		this.setBackground(Color.white);
-		mBufferedImage = new BufferedImage(5, 50,
-				BufferedImage.TYPE_INT_RGB);
+		mBufferedImage[0] = new MyBufferedImage(5, 50,
+				BufferedImage.TYPE_INT_RGB,new Dimension(20,125));
+		mBufferedImage[1] = new MyBufferedImage(5, 50,
+				BufferedImage.TYPE_INT_RGB,new Dimension(100,125));
+		mBufferedImage[2] = new MyBufferedImage(5, 50,
+				BufferedImage.TYPE_INT_RGB,new Dimension(180,125));
 	}
 
 	@Override
@@ -48,26 +43,32 @@ public class ImageCanvas extends JPanel{
 		g.drawImage(image, 0, 0, this);
 		
 		
-		//mBufferedImage
-		blankG = mBufferedImage.createGraphics();
-		blankG.setColor(Color.red);
-		blankG.fillRect(0, 0, mBufferedImage.getWidth(), mBufferedImage.getHeight());
-		blankG.drawImage(mBufferedImage, 0, 0, this);
+		for(MyBufferedImage bi : mBufferedImage)
+		{
+			//mBufferedImage
+			blankG = bi.createGraphics();
+			blankG.setColor(Color.red);
+			blankG.fillRect(0, 0, bi.getWidth(), bi.getHeight());
+			blankG.drawImage(bi, 0, 0, this);
+			
+			final AffineTransform affineTransform = new AffineTransform();
+	        
+	        int centreX = bi.getWidth() / 2;
+			int centreY = bi.getHeight() / 2;
+			
+	        affineTransform.translate(bi.getLocation().getWidth()+centreX, 
+	        		bi.getLocation().getHeight()+centreY);
+	        // transforms are applied in reverse order
+	        affineTransform.rotate(Math.toRadians(bi.getRotationInDegreee()));
+	        
+			// translate the center of the image to the top
+			affineTransform.translate(centreX, 0);
+			
+			g2.drawImage(bi,affineTransform, this);
+		}
 		
-        final AffineTransform affineTransform = new AffineTransform();
+		
         
-        int centreX = mBufferedImage.getWidth() / 2;
-		int centreY = mBufferedImage.getHeight() / 2;
-		
-        affineTransform.translate(145+centreX, 
-        		125 +centreY);
-        // transforms are applied in reverse order
-        affineTransform.rotate(Math.toRadians(rotationInDegreee));
-        
-		// translate the center of the image to the top
-		affineTransform.translate(centreX, 0);
-		
-		g2.drawImage(mBufferedImage,affineTransform, this);
 		
 		this.revalidate();
 	}
@@ -78,11 +79,11 @@ public class ImageCanvas extends JPanel{
 
 	}
 
-	public BufferedImage getImage() {
+	public MyBufferedImage[] getImage() {
 		return mBufferedImage;
 	}
 
-	public void setImage(BufferedImage image) {
-		this.mBufferedImage = image;
+	public void setImage(MyBufferedImage image) {
+		this.mBufferedImage[0] = image;
 	}
 }

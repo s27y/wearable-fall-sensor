@@ -94,9 +94,7 @@ public class SerialTest implements SerialPortEventListener {
 				System.out.println(inputLine);
 				if(v!=null)
 				{
-					String [] dataArray  = inputLine.split(",");
-					float sampleAxis =  Float.parseFloat(dataArray[2]);
-					v.updateImage(sampleAxis * 90.0f);
+					v.updateImage(inputLine);
 				}
 				
 			} catch (Exception e) {
