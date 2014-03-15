@@ -208,8 +208,8 @@ void newLoop()
 {
   getEstimatedInclination();
   //!!! Please note that printing more data will increase interval between samples. Try to keep it under 10ms (10,0000 us)   
-  printSerialTestData();
-
+  //printSerialTestData();
+  printDegree();
 }
 void printSerialTestData()
 {
