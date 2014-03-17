@@ -1,10 +1,12 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
 import gnu.io.CommPortIdentifier; 
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent; 
 import gnu.io.SerialPortEventListener; 
+
 import java.util.Enumeration;
 
 
@@ -30,6 +32,7 @@ public class SerialTest implements SerialPortEventListener {
 	private static final int DATA_RATE = 9600;
 	
 	public View v=null;
+	public HelloNode helloNode=null;
 
 	public void initialize() {
 		CommPortIdentifier portId = null;
@@ -96,6 +99,16 @@ public class SerialTest implements SerialPortEventListener {
 				{
 					v.updateImage(inputLine);
 				}
+				if(helloNode!=null)
+				{
+					String [] dataArray  = inputLine.split(",");
+					float x = Float.parseFloat(dataArray[1]);
+					float y = Float.parseFloat(dataArray[2]);
+					float z = Float.parseFloat(dataArray[3]);
+					float[] farray = {x,y,z};
+					helloNode.r.updateNew(farray);
+				}
+
 				
 			} catch (Exception e) {
 				System.err.println(e.toString());

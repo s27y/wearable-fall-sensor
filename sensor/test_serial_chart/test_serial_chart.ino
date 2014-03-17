@@ -237,7 +237,10 @@ void printDegree()
   Serial.print(RwGyro[1]);  //Inclination X axis (estimated / filtered)
   Serial.print(",");    
   Serial.print(RwGyro[2]);  //Inclination Y axis (as measured by accelerometer)
+
   Serial.println("");
+  
+  //
 }
 
 void getEstimatedInclination()
