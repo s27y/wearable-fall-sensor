@@ -41,14 +41,104 @@ float accel_angle_degx,
 float RwEst[3];  //Rw estimated from combining RwAcc and RwGyro
 float RwAcc[3];  //projection of normalized gravitation force 
 float RwGyro[3];        //Rw obtained from last estimated value and gyro movement
-float Awz[2];           //angles between projection of R on XZ/YZ plane and Z axis (deg)
+float Awz[3];           //angles between projection of R on XZ/YZ plane and Z axis (deg)
 
 unsigned long interval;
 unsigned long lastMicros;
 char firstSample;	  //marks first sample
 
+unsigned long NumOfData = 0;
+
 float wGyro;
 
+
+
+
+
+
+
+//=====================Test Buffer========================
+const unsigned int MAX_INPUT = 50;
+void process_data (const char * data)
+  {
+  // for now just display it
+  // (but you could compare it to some value, convert to an integer, etc.)
+  Serial.println ("##########################");
+  }  // end of process_data
+void processIncomingByte (const byte inByte)
+  {
+  static char input_line [MAX_INPUT];
+  static unsigned int input_pos = 0;
+
+  switch (inByte)
+    {
+
+    case '\n':   // end of text
+      input_line [input_pos] = 0;  // terminating null byte
+      
+      // terminator reached! process input_line here ...
+      process_data (input_line);
+      
+      // reset buffer for next time
+      input_pos = 0;  
+      break;
+
+    case '\r':   // discard carriage return
+      break;
+
+    default:
+      // keep adding if not full ... allow for terminating null byte
+      if (input_pos < (MAX_INPUT - 1))
+        input_line [input_pos++] = inByte;
+      break;
+
+    }  // end of switch
+   
+  } // end of processIncomingByte
+//=============================================
+
+
+
+//=======LOOP========
+void loop() {
+   updateAccelerationAndGyro();
+   //calcXyzAngles();
+   //printData();
+   //updateLoudness();
+   //bleTransmitSensorData();
+   //delay(1000);
+   //interval+=1000;
+   newLoop();
+
+}
+
+void newLoop()
+{
+  getEstimatedInclination();
+  //!!! Please note that printing more data will increase interval between samples. Try to keep it under 10ms (10,0000 us)   
+  //printSerialTestData();
+  printInterval();
+  printGyroDegree();
+  NumOfData++;
+  if(NumOfData==10)
+  {
+    NumOfData=0;
+    Serial.println("");
+  }
+}
+
+void setup() {
+   // Console (remove when not used)
+   Serial.begin(9600);
+   // Connect to the BLE module
+   Serial1.begin(38400);
+   Wire.begin();
+   initialiseAccelerationAndGyro();
+   initialiseLoudnessSensor();
+   firstSample = 1;
+   wGyro = 10;
+}
+//=======LOOP========
 void initialiseAccelerationAndGyro() {
    // Initializing IMU sensor
    accelgyro.initialize();
@@ -180,41 +270,15 @@ void printData()
   Serial.println();
 
 }
-void setup() {
-   // Console (remove when not used)
-   Serial.begin(9600);
-   // Connect to the BLE module
-   Serial1.begin(38400);
-   Wire.begin();
-   initialiseAccelerationAndGyro();
-   initialiseLoudnessSensor();
-   firstSample = 1;
-   wGyro = 10;
-}
 
-void loop() {
-   updateAccelerationAndGyro();
-   //calcXyzAngles();
-   //printData();
-   //updateLoudness();
-   //bleTransmitSensorData();
-   //delay(1000);
-   //interval+=1000;
-   
-   newLoop();
-}
 
-void newLoop()
-{
-  getEstimatedInclination();
-  //!!! Please note that printing more data will increase interval between samples. Try to keep it under 10ms (10,0000 us)   
-  //printSerialTestData();
-  printDegree();
-}
-void printSerialTestData()
+void printInterval()
 {
   Serial.print(interval);
   Serial.print(",");
+}
+void printAccData()
+{
   Serial.print(RwAcc[0]);  //Inclination X axis (as measured by accelerometer)
   Serial.print(",");
   Serial.print(RwEst[0]);  //Inclination X axis (estimated / filtered)
@@ -228,18 +292,14 @@ void printSerialTestData()
   Serial.print(RwEst[2]);  //Inclination Z axis (estimated / filtered)  
   Serial.println("");
 }
-void printDegree()
+void printGyroDegree()
 {
-  Serial.print(interval);
-  Serial.print(",");
   Serial.print(RwGyro[0]);  //Inclination X axis (as measured by accelerometer)
   Serial.print(",");
   Serial.print(RwGyro[1]);  //Inclination X axis (estimated / filtered)
   Serial.print(",");    
   Serial.print(RwGyro[2]);  //Inclination Y axis (as measured by accelerometer)
-
-  Serial.println("");
-  
+  Serial.print(";");
   //
 }
 
