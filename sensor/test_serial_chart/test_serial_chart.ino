@@ -48,7 +48,7 @@ unsigned long lastMicros;
 char firstSample;	  //marks first sample
 
 unsigned long NumOfData = 0;
-
+String dataToBle="";
 float wGyro;
 
 
@@ -122,8 +122,14 @@ void newLoop()
   NumOfData++;
   if(NumOfData==10)
   {
+    char charBuf[500];
+    dataToBle.toCharArray(charBuf, 500); 
+    //ble send
     NumOfData=0;
     Serial.println("");
+    Serial1.write(charBuf);
+    Serial1.flush();
+    dataToBle="";
   }
 }
 
@@ -276,6 +282,9 @@ void printInterval()
 {
   Serial.print(interval);
   Serial.print(",");
+  
+  dataToBle+=interval;
+  dataToBle+=",";
 }
 void printAccData()
 {
@@ -300,6 +309,17 @@ void printGyroDegree()
   Serial.print(",");    
   Serial.print(RwGyro[2]);  //Inclination Y axis (as measured by accelerometer)
   Serial.print(";");
+  char charBuf[50];
+  dtostrf(RwGyro[0], 3, 2, charBuf);
+  dataToBle+=charBuf;
+  
+  dataToBle+=",";
+  dtostrf(RwGyro[1], 3, 2, charBuf);
+  dataToBle+=charBuf;
+  dataToBle+=",";
+  dtostrf(RwGyro[2], 3, 2, charBuf);
+  dataToBle+=charBuf;
+  dataToBle+=";";
   //
 }
 
