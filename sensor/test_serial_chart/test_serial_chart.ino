@@ -22,7 +22,6 @@ MPU6050 accelgyro;
 
 #define PI 3.14159265358979f
 
-
 int16_t ax,ay,az;//original data;
 int16_t gx,gy,gz;//original data;
 float Ax,Ay,Az;//Unit g(9.8m/s^2)
@@ -31,40 +30,37 @@ float loudness;
 
 float accel_angle_x,  
       accel_angle_y,  
-      accel_angle_z; // in radian
+      accel_angle_z; // in radian calculated from Acc
       
 float accel_angle_degx,  
       accel_angle_degy,  
-      accel_angle_degz; // in degree
+      accel_angle_degz; // in degree calculated from Acc
       
       
 float RwEst[3];  //Rw estimated from combining RwAcc and RwGyro
 float RwAcc[3];  //projection of normalized gravitation force 
 float RwGyro[3];        //Rw obtained from last estimated value and gyro movement
-float Awz[3];           //angles between projection of R on XZ/YZ plane and Z axis (deg)
+float Awz[3];           //angles between projection of R on XZ/YZ plane and Z axis (deg)  - arctan2
 
-unsigned long interval;
-unsigned long lastMicros;
+unsigned long interval; //total running time TODO? might nead to reset at some stage
+unsigned long lastMicros; // perivous measurement interval
 char firstSample;	  //marks first sample
-
-unsigned long NumOfData = 0;
-String dataToBle="";
 float wGyro;
 
-
-
-
-
-
+//========Test Buffer Var==========
+unsigned long NumOfData = 0; //count of measurement data  (in one transmission)
+String dataToBle=""; //TESTING Purpose. this is the data sent to phone
+const unsigned int MAX_INPUT = 50;
+//========Test Buffer Var==========
 
 //=====================Test Buffer========================
-const unsigned int MAX_INPUT = 50;
 void process_data (const char * data)
   {
   // for now just display it
-  // (but you could compare it to some value, convert to an integer, etc.)
+  //
   Serial.println ("##########################");
   }  // end of process_data
+  
 void processIncomingByte (const byte inByte)
   {
   static char input_line [MAX_INPUT];
@@ -95,11 +91,12 @@ void processIncomingByte (const byte inByte)
     }  // end of switch
    
   } // end of processIncomingByte
-//=============================================
+//=======================END of Test Buffer======================
 
 
 
 //=======LOOP========
+//No delay in the loop. delay cause some problme on cacluate current gyro TODO? fix it
 void loop() {
    updateAccelerationAndGyro();
    //calcXyzAngles();
@@ -109,7 +106,6 @@ void loop() {
    //delay(1000);
    //interval+=1000;
    newLoop();
-
 }
 
 void newLoop()
@@ -120,7 +116,13 @@ void newLoop()
   printInterval();
   printGyroDegree();
   NumOfData++;
-  if(NumOfData==10)
+  testBleTransmissionSpeed();
+}
+
+//send data when buffered 10 data  TODO? or receive a special control msg?
+void testBleTransmissionSpeed()
+{
+    if(NumOfData==10)
   {
     char charBuf[500];
     dataToBle.toCharArray(charBuf, 500); 
@@ -131,6 +133,7 @@ void newLoop()
     Serial1.flush();
     dataToBle="";
   }
+
 }
 
 void setup() {
