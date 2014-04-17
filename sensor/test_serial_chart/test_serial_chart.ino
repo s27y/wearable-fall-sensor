@@ -98,25 +98,20 @@ void processIncomingByte (const byte inByte)
 //=======LOOP========
 //No delay in the loop. delay cause some problme on cacluate current gyro TODO? fix it
 void loop() {
-   updateAccelerationAndGyro();
-   //calcXyzAngles();
-   //printData();
-   //updateLoudness();
-   //bleTransmitSensorData();
-   //delay(1000);
-   //interval+=1000;
+   
    newLoop();
 }
 
 void newLoop()
 {
+  updateAccelerationAndGyro();
   getEstimatedInclination();
   //!!! Please note that printing more data will increase interval between samples. Try to keep it under 10ms (10,0000 us)   
   //printSerialTestData();
   printInterval();
-  printGyroDegree();
-  NumOfData++;
-  testBleTransmissionSpeed();
+  printAccData();
+  //NumOfData++;
+  //testBleTransmissionSpeed();
 }
 
 //send data when buffered 10 data  TODO? or receive a special control msg?
